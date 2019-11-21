@@ -1,0 +1,67 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    16:33:56 09/11/2017 
+-- Design Name: 
+-- Module Name:    ROM - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_TEXTIO.ALL;
+use STD.TEXTIO.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity ROM is
+    Port ( clk : in  STD_LOGIC;
+           PC : in  STD_LOGIC_VECTOR (7 downto 0);
+           Instruction : out  STD_LOGIC_VECTOR (11 downto 0));
+end ROM;
+
+architecture Behavioral of ROM is
+type rom_type is array (0 to 2**(8)-1) of STD_LOGIC_VECTOR (11 downto 0);
+	impure function makeROM (PROGRAMA : in string) return rom_type is                                                   
+		FILE Program : text is in "PROGRAM.MIF";                       
+		variable L : line;                                 
+		variable IROM : rom_type;
+	begin
+		for I in rom_type'range loop
+			readline (Program, L);
+			read (L, IROM(I));
+		end loop;
+	return IROM;
+	end function;
+	
+	signal IROM : rom_type := makeROM("PROGRAM.MIF");
+	signal sel : STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
+begin
+
+	process(clk)
+	begin
+		if rising_edge(clk) then
+			sel <= PC;
+		end if;
+	end process;
+
+	Instruction <= IROM(to_integer(unsigned(sel)));
+
+end Behavioral;

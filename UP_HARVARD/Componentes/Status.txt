@@ -1,0 +1,63 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    09:00:42 11/07/2019 
+-- Design Name: 
+-- Module Name:    Status - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity Status is
+    PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         N : IN  std_logic;
+         Z : IN  std_logic;
+			F : IN  std_logic;
+         Status_load : IN  std_logic;
+         Status_N : OUT  std_logic;
+         Status_Z : OUT  std_logic
+        );
+
+end Status;
+
+architecture Behavioral of Status is
+signal n1: STD_LOGIC_VECTOR(7 downto 0);
+begin
+process(clk,reset,n1,N,Z,F,Status_load)
+begin
+	if (reset='1' and F='1')then--Agragamos el F='1' para poder  aplicar el reset de manera adecuada, dado que F tambien afcta elreseteo de los datos
+			Status_N <= '0'; 
+         Status_Z <= '1';
+	elsif (clk'event and clk='0') then
+		if(F='1' and Status_load='1') then--asignamos los valores que se establecieron en el problema
+		--Para este caso se asignanlos valores respectivos
+			Status_N <= N; 
+         Status_Z <= Z;
+		end if;
+	end if;
+end process;
+end Behavioral;
+

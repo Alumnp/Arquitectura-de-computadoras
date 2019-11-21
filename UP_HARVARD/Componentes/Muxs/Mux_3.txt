@@ -1,0 +1,58 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    12:48:05 11/13/2019 
+-- Design Name: 
+-- Module Name:    Mux3 - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity Mux_3 is
+	Port (  PCout : in STD_LOGIC_VECTOR(7 downto 0);
+				A: in  STD_LOGIC_VECTOR (7 downto 0);
+				X : in STD_LOGIC_VECTOR (1 downto 0);
+				Status_N: in STD_LOGIC ;
+				Status_Z: in STD_LOGIC;
+			  DataIn : out STD_LOGIC_VECTOR(7 downto 0)
+			  );
+end Mux_3;
+
+architecture Behavioral of Mux_3 is
+signal aux: STD_LOGIC_VECTOR(7 downto 0);
+begin
+process(PCout,A,X,Status_N,Status_Z)
+begin
+if(X="00")then
+	DataIn<=A;
+elsif(X="01")then
+	DataIn<=PCout;
+elsif(X="10")then
+	DataIn<="000000"&Status_Z&Status_N;
+end if;
+end process;
+
+end Behavioral;
+

@@ -1,0 +1,295 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    08:39:05 11/11/2019 
+-- Design Name: 
+-- Module Name:    CU - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity CU is
+ PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         OpCode : IN  std_logic_vector(3 downto 0);
+         Data : IN  std_logic_vector(7 downto 0);
+         Interrupt : IN  std_logic;
+         Status_N : IN  std_logic;
+         Status_Z : IN  std_logic;
+         IR_load : OUT  std_logic;
+         PC_cmd : OUT  std_logic_vector(1 downto 0);
+         Acc_load : OUT  std_logic;
+         Status_load : OUT  std_logic;
+         Push : OUT  std_logic;
+         Pull : OUT  std_logic;
+         we : OUT  std_logic;
+         mux1 : OUT  std_logic;
+         mux2 : OUT  std_logic;
+         mux3 : OUT  std_logic_vector(1 downto 0);
+			mux4 : OUT  std_logic_vector(1 downto 0);
+			irq_end : OUT  std_logic
+        );
+  
+end CU;
+
+architecture Behavioral of CU is
+type estado_t is (s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13);
+signal estado, estado_sig: estado_t;
+begin
+process(clk,reset)
+begin
+
+	 if (reset='1') then   
+	 estado <= s0;  
+	 elsif (rising_edge(clk)) then  
+	 estado <= estado_sig; 
+	 end if;
+end process;
+
+process(estado,estado_sig,OpCode,Data, Interrupt,Status_N, Status_Z)
+begin
+		IR_load <= '0';
+		PC_cmd <= "00";
+		Acc_load <= '0';
+		Status_load <= '0';
+		Push <= '0';
+		Pull <= '0';
+		we <= '0';
+		mux1 <= '0';
+		mux2 <= '0';
+		mux3 <= "00";
+		mux4 <= "00";
+		irq_end <= '0';
+case estado is
+--Maquina de estado S0
+	when s0 =>
+	
+		if(Interrupt = '0') then --Condicional para moverse a la maquina S1
+		
+				IR_load <= '1';
+				PC_cmd <= "01";
+				estado_sig <= s1;
+				
+		elsif(Interrupt<='1') then--El otro caso para que SO se mueva a S12
+
+				 Push <='1';
+				 we <='1';
+				 mux2<='1';
+				 mux3 <="01";
+				estado_sig<=s12;
+				
+		end if;
+--Maquina de estado S1
+	when s1 =>
+	--Se le asigno varios casos de OpCode paaar mover a S1 a S0
+		if(OpCode = "0000" or OpCode = "0010" or OpCode = "0100" or OpCode = "0110" or OpCode = "1000" or OpCode = "1010") then
+		--Se encienden las salidas asignadas
+			Acc_load <= '1';
+			Status_load <= '1';
+			estado_sig <= s0;
+		--Estos casos de OpCode Solo hace que se nueva S0 a S2
+		elsif (OpCode = "0001" or OpCode = "0011" or OpCode = "0101" or OpCode = "0111" or OpCode = "1001") then
+		
+			estado_sig <= s2;
+		
+		--Se usa a data de 7 a 6 para asignar 2 bits y Data en 5 para usar un bit
+		elsif (OpCode = "1011" and Data(7 downto 6) = "11" and Data(5) = '1') then
+		--S1 a S5
+			Pull <= '1';
+			estado_sig <= s5;
+			
+		--Este caso cambia solo en Data en 5 
+		elsif(OpCode = "1011" and Data(7 downto 6) = "11" and Data(5) = '0') then
+		--S1 a S0
+			Push <='1';
+			we <='1';
+			mux2<='1';
+			estado_sig <= s0;
+--En este caso solo usamos a Data en 00 y con OpCode
+		elsif(OpCode = "1011" and Data(7 downto 6) = "00") then 
+		--S1 a S11
+			PC_cmd <="11";
+			Push <='1';
+			we <='1';
+			mux2<='1';
+			mux3 <="01";
+			estado_sig<=s11;
+	--Otro caso de data de 7 a 6 en con caso 01		
+		elsif (OpCode = "1011" and Data(7 downto 6) = "01") then
+		--S1 a S3 
+			Pull <= '1';
+			estado_sig <= s3;
+		--Lo mismo de Data pero con caso de 10	
+		elsif (OpCode = "1011" and Data(7 downto 6) = "10") then
+		--S1 a S7
+			Pull <= '1';
+			estado_sig <= s7;
+		
+--Un caso de OpCode, donde se enciende solamente we=1		
+		elsif(OpCode = "1101") then
+		--S1 a S0
+			we <= '1';
+			estado_sig <= s0;
+--Este caso tubo su complejidad, pero funciono
+		elsif (OpCode = "1110") then
+		--En todos estos casos S1 va a S11
+			if(Data(7 downto 6) = "00" and Status_Z = '1')then--Se usa a Status_Z=1
+			
+				PC_cmd <= "11";
+				estado_sig <= s11;
+				
+			elsif(Data(7 downto 6) = "01" and Status_Z = '0')then --Este se usa a Status_Z=0
+				
+				PC_cmd <= "11";
+				estado_sig <= s11;
+				
+			elsif(Data(7 downto 6) = "10" and Status_N = '1' and Status_Z = '0')then--Aqui se usa a Status_N encendido como un agregado
+				
+				PC_cmd <= "11";
+				estado_sig <= s11;
+				
+			elsif(Data(7 downto 6) = "11" and Status_N = '0' and Status_Z = '0') then--Aqui como en el anterior Los Status estan apagados
+				
+				PC_cmd <= "11";
+				estado_sig <= s11;
+				
+			else --Aqui no se asigno Una condicional ya que la maquina espqcifica que debe ser cualquier otro caso fuera de los anteriores
+				--S1 a S0 
+				estado_sig <= s0;
+				
+			end if;
+		
+		--Un caso de OpCode
+		elsif (OpCode = "1100") then
+		--S1 a S2
+			mux1 <= '1';
+			estado_sig <= s2;
+			
+		--El ultimo caso de OpCode
+		elsif (OpCode = "1111") then 
+		--S1 a S11
+			PC_cmd <= "10";
+			estado_sig <= s11;
+
+		
+		end if;
+		
+--Maquina de estado S2
+		when s2=>
+			--Aqui la maquina de estados va directo a S0 con las salidas indicadas, encendidas
+			 Acc_load <='1';
+			 Status_load <='1';
+			 mux1 <='1';
+			estado_sig<=s0;
+			
+--Maquina de estado S3		
+		when s3=>
+			--Aqui S3 va S4
+			 mux2<='1';
+			estado_sig<=s4;
+			
+--Maquina de estado S4	
+		when s4=>
+			 --S4 va a S11
+			 PC_cmd <="10";
+			 mux4 <="01";
+			estado_sig<=s11;
+			
+--Maquina de estado S5
+		when s5=>
+			--S5 va a S6 
+			 mux2<='1';
+			estado_sig<=s6;
+			
+--Maquina de estado S6			
+		when s6=>
+			--S6 va a S0
+			 Acc_load <='1';
+			 mux1 <='1';
+			estado_sig<=s0;
+			
+--Maquina de estado S7
+		when s7=>
+			 --S7 va a S8
+			 Pull <='1';
+			 mux2<='1';
+			estado_sig<=s8;
+			
+--Maquina de estado S8
+		when s8 =>
+			 --S8 va a S9
+			 Status_load <='1';
+			 Pull <='1';
+			 mux1 <='1';
+			 mux2<='1';
+			estado_sig<=s9;
+
+--Maquina de estado S9			
+		when s9 =>
+			--S9 va a S10
+			 Acc_load <='1';
+			 mux1 <='1';
+			 mux2<='1';
+			estado_sig<=s10;
+			
+--Maquina de estado S10
+		when s10 =>
+			 --S10 va S11
+			 PC_cmd <="10";
+			 mux4 <="01";
+			estado_sig<=s11;
+			
+--Maquina de estado S0
+		when s11 =>
+			 --S11 se mueve a S0
+			estado_sig<=s0;
+			
+--Maquina de estado S12	
+		when s12 =>
+			 --S12 va a S13
+			 PC_cmd <="10";
+			 Push <='1';
+			 we <='1';
+			 mux2<='1';
+			 mux4 <="10";
+			 irq_end <='1';
+			estado_sig<=s13;
+			
+--Maquina de estado S13
+		when s13 =>
+			--S13 va a S0
+			 Push <='1';
+			 we <='1';
+			 mux2<='1';
+			 mux3 <="10";
+			estado_sig<=s0;
+			
+		when others=>null;
+	end case;
+
+end process;
+
+end Behavioral;
+

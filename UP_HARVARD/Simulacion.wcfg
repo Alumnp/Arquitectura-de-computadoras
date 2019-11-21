@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/vazqu/Desktop/libreta 2/Harvard_Final/uPHarvard_TB_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_textio" />
+            <top_module name="std_logic_unsigned" />
+            <top_module name="textio" />
+            <top_module name="upharvard_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="44" />
+   <wvobject fp_name="/upharvard_tb/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/irq" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">irq</obj_property>
+      <obj_property name="ObjectShortName">irq</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/output" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">output[7:0]</obj_property>
+      <obj_property name="ObjectShortName">output[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/clk_period" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">clk_period</obj_property>
+      <obj_property name="ObjectShortName">clk_period</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H01/data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">data[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H01/x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">x</obj_property>
+      <obj_property name="ObjectShortName">x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H01/dataout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dataout[7:0]</obj_property>
+      <obj_property name="ObjectShortName">dataout[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H01/dataa" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dataa[7:0]</obj_property>
+      <obj_property name="ObjectShortName">dataa[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H02/sp" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sp[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sp[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H02/addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">addr[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H03/a" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">a[7:0]</obj_property>
+      <obj_property name="ObjectShortName">a[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H03/pcout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pcout[7:0]</obj_property>
+      <obj_property name="ObjectShortName">pcout[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H03/status_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">status_n</obj_property>
+      <obj_property name="ObjectShortName">status_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H03/status_z" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">status_z</obj_property>
+      <obj_property name="ObjectShortName">status_z</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H03/datain" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">datain[7:0]</obj_property>
+      <obj_property name="ObjectShortName">datain[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H04/pcin" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pcin[7:0]</obj_property>
+      <obj_property name="ObjectShortName">pcin[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H05/opcode" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">opcode[3:0]</obj_property>
+      <obj_property name="ObjectShortName">opcode[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H05/s" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">s[7:0]</obj_property>
+      <obj_property name="ObjectShortName">s[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H05/f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">f</obj_property>
+      <obj_property name="ObjectShortName">f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H05/z" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">z</obj_property>
+      <obj_property name="ObjectShortName">z</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H05/n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">n</obj_property>
+      <obj_property name="ObjectShortName">n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H06/acc_load" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">acc_load</obj_property>
+      <obj_property name="ObjectShortName">acc_load</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/interrupt" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">interrupt</obj_property>
+      <obj_property name="ObjectShortName">interrupt</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/ir_load" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ir_load</obj_property>
+      <obj_property name="ObjectShortName">ir_load</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/pc_cmd" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc_cmd[1:0]</obj_property>
+      <obj_property name="ObjectShortName">pc_cmd[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/status_load" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">status_load</obj_property>
+      <obj_property name="ObjectShortName">status_load</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/push" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">push</obj_property>
+      <obj_property name="ObjectShortName">push</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/pull" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">pull</obj_property>
+      <obj_property name="ObjectShortName">pull</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/we" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">we</obj_property>
+      <obj_property name="ObjectShortName">we</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/mux1" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mux1</obj_property>
+      <obj_property name="ObjectShortName">mux1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/mux2" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mux2</obj_property>
+      <obj_property name="ObjectShortName">mux2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/mux3" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mux3[1:0]</obj_property>
+      <obj_property name="ObjectShortName">mux3[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/mux4" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mux4[1:0]</obj_property>
+      <obj_property name="ObjectShortName">mux4[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/irq_end" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">irq_end</obj_property>
+      <obj_property name="ObjectShortName">irq_end</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/estado" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">estado</obj_property>
+      <obj_property name="ObjectShortName">estado</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H07/estado_sig" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">estado_sig</obj_property>
+      <obj_property name="ObjectShortName">estado_sig</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H09/instruction" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">instruction[11:0]</obj_property>
+      <obj_property name="ObjectShortName">instruction[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H10/branch" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch[5:0]</obj_property>
+      <obj_property name="ObjectShortName">branch[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H11/addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">addr[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H12/pc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc[7:0]</obj_property>
+      <obj_property name="ObjectShortName">pc[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H13/sp" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sp[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sp[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H13/push" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">push</obj_property>
+      <obj_property name="ObjectShortName">push</obj_property>
+   </wvobject>
+   <wvobject fp_name="/upharvard_tb/uut/H13/pull" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">pull</obj_property>
+      <obj_property name="ObjectShortName">pull</obj_property>
+   </wvobject>
+</wave_config>

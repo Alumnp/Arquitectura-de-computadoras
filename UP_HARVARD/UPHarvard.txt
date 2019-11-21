@@ -1,0 +1,351 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    12:13:00 11/13/2019 
+-- Design Name: 
+-- Module Name:    uPHarvard - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity uPHarvard is
+	PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+			irq : IN  std_logic;
+         output : OUT  std_logic_vector(7 downto 0)
+        );
+end uPHarvard;
+
+architecture Behavioral of uPHarvard is
+--Señales de 11 a 0
+signal Instruction: STD_LOGIC_VECTOR(11 downto 0);
+--Señales de 7 a 0
+signal A: STD_LOGIC_VECTOR(7 downto 0);
+signal S :STD_LOGIC_VECTOR(7 downto 0);
+signal DataA:STD_LOGIC_VECTOR(7 downto 0);
+signal PCin:STD_LOGIC_VECTOR(7 downto 0);
+signal Addr:STD_LOGIC_VECTOR(7 downto 0);
+signal DataIn:STD_LOGIC_VECTOR(7 downto 0);
+signal Dataout:STD_LOGIC_VECTOR(7 downto 0);
+signal PCout:STD_LOGIC_VECTOR(7 downto 0);
+signal SP: STD_LOGIC_VECTOR(7 downto 0);
+signal Data: STD_LOGIC_VECTOR(7 downto 0);
+--Señales de 3 a 0
+signal OpCode: STD_LOGIC_VECTOR(3 downto 0); 
+--Señales de 1 a 0
+signal Status_N: std_logic;
+signal Status_Z: std_logic;
+signal Status_load: std_logic;
+signal irq_end: std_logic;
+signal muxa1: std_logic;
+signal muxa2: std_logic;
+signal Push: std_logic;
+signal Pull: std_logic;
+signal we: std_logic;
+signal Interrupt: std_logic;
+signal Acc_load: std_logic;
+signal IR_load: std_logic;
+signal N: std_logic;
+signal F: std_logic;
+signal Z: std_logic;
+--Senales de 1
+signal PC_cmd: STD_LOGIC_VECTOR(1 downto 0);
+signal muxa3: STD_LOGIC_VECTOR(1 downto 0);
+signal muxa4: STD_LOGIC_VECTOR(1 downto 0);
+
+
+
+COMPONENT ALU is
+ PORT(
+         A : IN  std_logic_vector(7 downto 0);
+         Data : IN  std_logic_vector(7 downto 0);
+         OpCode : IN  std_logic_vector(3 downto 0);
+         S : OUT  std_logic_vector(7 downto 0);
+			F : OUT  std_logic;
+         Z : OUT  std_logic;
+         N : OUT  std_logic
+        );
+END COMPONENT;
+
+COMPONENT Acc is
+ Port ( clk : in  STD_LOGIC;
+           reset : in  STD_LOGIC;
+           S : in  STD_LOGIC_VECTOR (7 downto 0);
+           Acc_load : in  STD_LOGIC;
+           A : out  STD_LOGIC_VECTOR (7 downto 0)
+			  );
+END COMPONENT;
+
+COMPONENT CU is
+PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         OpCode : IN  std_logic_vector(3 downto 0);
+         Data : IN  std_logic_vector(7 downto 0);
+         Interrupt : IN  std_logic;
+         Status_N : IN  std_logic;
+         Status_Z : IN  std_logic;
+         IR_load : OUT  std_logic;
+         PC_cmd : OUT  std_logic_vector(1 downto 0);
+         Acc_load : OUT  std_logic;
+         Status_load : OUT  std_logic;
+         Push : OUT  std_logic;
+         Pull : OUT  std_logic;
+         we : OUT  std_logic;
+         mux1 : OUT  std_logic;
+         mux2 : OUT  std_logic;
+         mux3 : OUT  std_logic_vector(1 downto 0);
+			mux4 : OUT  std_logic_vector(1 downto 0);
+			irq_end : OUT  std_logic
+        );
+  
+END COMPONENT;
+
+COMPONENT IHandler is
+ Port ( clk : in STD_LOGIC;
+			  reset : in STD_LOGIC;
+			  irq : in  STD_LOGIC;
+			  irq_end : in STD_LOGIC;
+			  Interrupt : out  STD_LOGIC);
+END COMPONENT;
+
+
+COMPONENT IR is
+ PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         Instruction : IN  std_logic_vector(11 downto 0);
+         IR_load : IN  std_logic;
+         OpCode : OUT  std_logic_vector(3 downto 0);
+         Data : OUT  std_logic_vector(7 downto 0)
+        );
+END COMPONENT;
+
+
+COMPONENT PC is
+PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         PCin : IN  std_logic_vector(7 downto 0);
+         Branch : IN  std_logic_vector(5 downto 0);
+         PC_cmd : IN  std_logic_vector(1 downto 0);
+         PCout : OUT  std_logic_vector(7 downto 0)
+        );END COMPONENT;
+
+
+COMPONENT RAM is
+    Port ( clk : in  STD_LOGIC;
+           Addr : in  STD_LOGIC_VECTOR (7 downto 0);
+           we : in  STD_LOGIC;
+           DataIn : in  STD_LOGIC_VECTOR (7 downto 0);
+           DataOut : out  STD_LOGIC_VECTOR (7 downto 0));
+END COMPONENT;
+
+COMPONENT ROM is
+    Port ( clk : in  STD_LOGIC;
+           PC : in  STD_LOGIC_VECTOR (7 downto 0);
+           Instruction : out  STD_LOGIC_VECTOR (11 downto 0));
+END COMPONENT;
+
+COMPONENT Stack is
+    PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         Push : IN  std_logic;
+         Pull : IN  std_logic;
+         SP : OUT  std_logic_vector(7 downto 0)
+        );
+END COMPONENT;
+
+COMPONENT Status is
+     PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         N : IN  std_logic;
+         Z : IN  std_logic;
+			F : IN  std_logic;
+         Status_load : IN  std_logic;
+         Status_N : OUT  std_logic;
+         Status_Z : OUT  std_logic
+        );
+END COMPONENT;
+
+COMPONENT Mux_1 is
+     PORT(  Data : in STD_LOGIC_VECTOR(7 downto 0);
+				X: in std_logic;
+            DataOut : in  STD_LOGIC_VECTOR (7 downto 0);
+			   DataA : out STD_LOGIC_VECTOR(7 downto 0)
+			 );
+END COMPONENT;
+
+COMPONENT Mux_2 is
+     PORT(  Data : in STD_LOGIC_VECTOR(7 downto 0);
+				SP: in  STD_LOGIC_VECTOR (7 downto 0);
+				X : in std_logic;
+			   Addr : out STD_LOGIC_VECTOR(7 downto 0)
+			);
+END COMPONENT;
+
+COMPONENT Mux_3 is
+     PORT(  PCout : in STD_LOGIC_VECTOR(7 downto 0);
+				A: in  STD_LOGIC_VECTOR (7 downto 0);
+				X: in STD_LOGIC_VECTOR (1 downto 0);
+				Status_N: in STD_LOGIC ;
+				Status_Z: in STD_LOGIC;
+			   DataIn : out STD_LOGIC_VECTOR(7 downto 0)
+			);
+END COMPONENT;
+
+COMPONENT Mux_4 is
+     PORT(  Data : in STD_LOGIC_VECTOR(7 downto 0);
+				DataOut: in  STD_LOGIC_VECTOR (7 downto 0);
+				X: in STD_LOGIC_VECTOR (1 downto 0);
+			   PCin : out STD_LOGIC_VECTOR(7 downto 0)
+			);
+END COMPONENT;
+begin
+H01: Mux_1 PORT MAP (  
+			Data =>Data,--: in STD_LOGIC_VECTOR(7 downto 0);
+			X =>muxa1,--: in std_logic;
+			DataOut =>DataOut,--: in  STD_LOGIC_VECTOR (7 downto 0);
+			DataA =>DataA--: out STD_LOGIC_VECTOR(7 downto 0)
+		  );
+H02: Mux_2 PORT MAP (  
+			Data =>Data,--: in STD_LOGIC_VECTOR(7 downto 0);
+			SP=>SP,--: in  STD_LOGIC_VECTOR (7 downto 0);
+			X =>muxa2,--: in std_logic;
+			Addr=>Addr-- : out STD_LOGIC_VECTOR(7 downto 0)
+		  );
+H03: Mux_3 PORT MAP ( 
+			PCout =>PCout,--: in STD_LOGIC_VECTOR(7 downto 0);
+		   A=>A,--: in  STD_LOGIC_VECTOR (7 downto 0);
+			X =>muxa3,--: in STD_LOGIC_VECTOR (1 downto 0);
+			Status_N=>Status_N,--": in STD_LOGIC_VECTOR ;
+			Status_Z=>Status_Z,--: in STD_LOGIC_VECTOR;
+			DataIn =>DataIn--: out STD_LOGIC_VECTOR(7 downto 0)
+		);
+H04: Mux_4 PORT MAP ( 
+			Data =>Data,--: in STD_LOGIC_VECTOR(7 downto 0);
+		   DataOut =>DataOut,--: in  STD_LOGIC_VECTOR (7 downto 0);
+		   X =>muxa4,--: in STD_LOGIC_VECTOR (1 downto 0);
+			PCin =>PCin--: out STD_LOGIC_VECTOR(7 downto 0)
+		);
+H05: ALU PORT MAP (
+         A =>A,--: IN  std_logic_vector(7 downto 0);
+         Data =>DataA,--: IN  std_logic_vector(7 downto 0);
+         OpCode =>OpCode,--: IN  std_logic_vector(3 downto 0);
+         S =>S,--: OUT  std_logic_vector(7 downto 0);
+			F =>F,--: OUT  std_logic;
+         Z =>Z,--: OUT  std_logic;
+         N =>N--: OUT  std_logic
+        );
+ 
+H06: Acc PORT MAP (
+          clk =>clk,--: in  STD_LOGIC;
+           reset=>reset,--, : in  STD_LOGIC;
+           S =>S,--: in  STD_LOGIC_VECTOR (7 downto 0);
+           Acc_load=>Acc_load,-- : in  STD_LOGIC;
+           A =>A--: out  STD_LOGIC_VECTOR (7 downto 0));
+        );
+
+H07: CU PORT MAP (
+         clk =>clk,
+         reset =>reset,
+         OpCode =>OpCode,
+         Data=>Data,
+         Interrupt=>Interrupt,
+         Status_N =>N,
+         Status_Z =>Z,
+         IR_load =>IR_load,
+         PC_cmd => PC_cmd,
+         Acc_load =>Acc_load,
+         Status_load =>Status_load,
+         Push => Push,
+         Pull =>Pull,
+         we =>we,
+         mux1 => muxa1,
+         mux2 =>muxa2,
+         mux3 =>muxa3,
+			mux4 =>muxa4,
+			irq_end=>irq_end
+        );
+
+H08: IHandler PORT MAP ( 
+			  clk =>clk,--: in STD_LOGIC;
+			  reset =>reset,--: in STD_LOGIC;
+			  irq =>irq,--: in  STD_LOGIC;
+			  irq_end => irq_end,--: in STD_LOGIC;
+			  Interrupt =>Interrupt--: out  STD_LOGIC
+		);
+H09: IR PORT MAP ( 
+			 clk =>clk,--: IN  std_logic;
+         reset =>reset,--: IN  std_logic;
+         Instruction =>Instruction,--: IN  std_logic_vector(11 downto 0);
+         IR_load=>IR_load,-- : IN  std_logic;
+         OpCode=>OpCode,-- : OUT  std_logic_vector(3 downto 0);
+         Data =>Data--: OUT  std_logic_vector(7 downto 0)
+        );
+H10: PC PORT MAP (
+         clk =>clk,--: IN  std_logic;
+         reset =>reset,--: IN  std_logic;
+         PCin =>PCin,--: IN  std_logic_vector(7 downto 0);
+         Branch =>Data(5 downto 0),--: IN  std_logic_vector(5 downto 0);
+         PC_cmd =>PC_cmd,--: IN  std_logic_vector(1 downto 0);
+         PCout =>PCout--: OUT  std_logic_vector(7 downto 0)
+        );
+
+H11: RAM PORT MAP ( 
+			clk =>clk,--: in  STD_LOGIC;
+         Addr =>Addr,--: in  STD_LOGIC_VECTOR (7 downto 0);
+         we =>we,--: in  STD_LOGIC;
+         DataIn =>DataIn,--: in  STD_LOGIC_VECTOR (7 downto 0);
+         DataOut =>DataOut--: out  STD_LOGIC_VECTOR (7 downto 0)
+		);
+H12: ROM PORT MAP ( 
+			clk =>clk,--: in  STD_LOGIC;
+         PC =>PCout,--: in  STD_LOGIC_VECTOR (7 downto 0);
+         Instruction=>Instruction-- : out  STD_LOGIC_VECTOR (11 downto 0)
+		);
+H13: stack PORT MAP (
+         clk =>clk,--: IN  std_logic;
+         reset=>reset,-- : IN  std_logic;
+         Push =>Push,--: IN  std_logic;
+         Pull =>Pull,--: IN  std_logic;
+         SP =>SP--: OUT  std_logic_vector(7 downto 0)
+        );
+H14: Status PORT MAP (
+         clk =>clk,--: IN  std_logic;
+         reset=>reset,-- : IN  std_logic;
+         N =>N,--: IN  std_logic;
+         Z =>Z,--: IN  std_logic;
+			F =>F,--: IN  std_logic;
+         Status_load=>Status_load,-- : IN  std_logic;
+         Status_N =>Status_N,--: OUT  std_logic;
+         Status_Z =>Status_Z--: OUT  std_logic
+        );
+		output<=A;
+end Behavioral;
+
+

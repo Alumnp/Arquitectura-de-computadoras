@@ -1,0 +1,93 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    02:54:06 10/27/2017 
+-- Design Name: 
+-- Module Name:    IHandler - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity IHandler is
+    Port ( clk : in STD_LOGIC;
+			  reset : in STD_LOGIC;
+			  irq : in  STD_LOGIC;
+			  irq_end : in STD_LOGIC;
+			  Interrupt : out  STD_LOGIC);
+end IHandler;
+
+architecture Behavioral of IHandler is
+	signal edge : STD_LOGIC;
+	type states is (s0, s1);
+	signal current_state, next_state: states;
+begin
+	
+	process(clk)
+begin
+	if clk = '1' and clk'event then
+			if (reset = '1' and irq = '0') or irq_end = '1' then
+				Interrupt <= '0';
+			else
+				if edge = '1' then
+					Interrupt <= '1';
+				end if;
+			end if;
+end if;
+end process;
+	
+	
+	process(clk, reset)
+	begin
+		if (clk'event and clk = '1') then
+			if reset = '0' then
+				current_state <= next_state;
+			else
+				current_state <= s0;
+			end if;
+		end if;
+	end process;
+	
+	process (irq, current_state)
+	begin
+		case current_state is
+			when s0 =>
+				if irq = '1' then
+					next_state <= s1;
+					edge <= '1';
+				else
+					next_state <= s0;
+					edge <= '0';
+				end if;
+			when s1 =>
+				if irq = '1' then 
+					next_state <= s1;
+					edge <= '0';
+				else
+					next_state <= s0;
+					edge <= '0';
+				end if;
+		end case;
+	end process;
+
+end Behavioral;

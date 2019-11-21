@@ -1,0 +1,68 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    11:07:10 10/31/2019 
+-- Design Name: 
+-- Module Name:    PC - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity PC is
+PORT(
+         clk : IN  std_logic;
+         reset : IN  std_logic;
+         PCin : IN  std_logic_vector(7 downto 0);
+         Branch : IN  std_logic_vector(5 downto 0);
+         PC_cmd : IN  std_logic_vector(1 downto 0);
+         PCout : OUT  std_logic_vector(7 downto 0)
+        );
+end PC;
+
+architecture Behavioral of PC is
+signal n1: STD_LOGIC_VECTOR(7 downto 0);
+begin
+process(clk,reset,PCin,PC_cmd,Branch)
+begin
+--Creamos las condicionales de reset para dar cero el auxiliar n1 que sera signado a PCout
+	if (reset='1')then
+		--PCout<="00000000";
+		n1<="00000000";
+	elsif (clk'event and clk='0') then
+	--Usamos los casos if de PC_cmd para asignar los valores que tendra PCout,tomando en cuenta que PC_cmd es de 2 bits.
+		if(PC_cmd="01")then
+			n1<=std_logic_vector(unsigned(n1)+1);--Se suma la msima salida o en este caso el mismos auxiliar
+		elsif(PC_cmd="10")then
+			n1<=PCin;--Se asigna la entrada PCin
+		elsif(PC_cmd="11")then
+			n1<=	std_logic_vector(signed(n1) +signed(Branch));--Se suma la salida mas el branch donde dicha suma el branch y n1 tendra signo
+		end if;
+		
+	end if;
+	PCout<=n1;
+end process;
+
+end Behavioral;
+

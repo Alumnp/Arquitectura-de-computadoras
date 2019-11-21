@@ -1,0 +1,55 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    12:57:01 11/13/2019 
+-- Design Name: 
+-- Module Name:    Mux4 - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity Mux_4 is
+	Port (  Data : in STD_LOGIC_VECTOR(7 downto 0);
+				DataOut: in  STD_LOGIC_VECTOR (7 downto 0);
+				X : in STD_LOGIC_VECTOR (1 downto 0);
+			  PCin : out STD_LOGIC_VECTOR(7 downto 0)
+			  );
+end Mux_4;
+
+architecture Behavioral of Mux_4 is
+
+begin
+process(Data,DataOut,X)
+begin
+if(X="00")then
+	PCin<=Data;
+elsif(X="01")then
+	PCin<=DataOut;
+elsif(X="10")then
+	PCin<="11000000";
+end if;
+end process;
+
+end Behavioral;
+
